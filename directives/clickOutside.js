@@ -1,5 +1,6 @@
 const isTouch =
-    typeof window !== 'undefined' && ('ontouchstart' in window || navigator.msMaxTouchPoints > 0)
+    typeof window !== 'undefined' &&
+    ('ontouchstart' in window || navigator.msMaxTouchPoints > 0)
 const events = isTouch ? ['touchstart', 'click'] : ['click']
 
 const instances = []
@@ -7,13 +8,16 @@ const instances = []
 function processArgs(bindingValue) {
     const isFunction = typeof bindingValue === 'function'
     if (!isFunction && typeof bindingValue !== 'object') {
-        throw new Error(`v-click-outside: Binding value should be a function or an object, ${typeof bindingValue} given`)
+        throw new Error(
+            `v-click-outside: Binding value should be a function or an object, ${typeof bindingValue} given`
+        )
     }
 
     return {
         handler: isFunction ? bindingValue : bindingValue.handler,
-        middleware: bindingValue.middleware || ((isClickOutside) => isClickOutside),
-        events: bindingValue.events || events
+        middleware:
+            bindingValue.middleware || ((isClickOutside) => isClickOutside),
+        events: bindingValue.events || events,
     }
 }
 
@@ -40,8 +44,8 @@ function bind(el, { value }) {
         el,
         eventHandlers: events.map((eventName) => ({
             event: eventName,
-            handler: (event) => onEvent({ event, el, handler, middleware })
-        }))
+            handler: (event) => onEvent({ event, el, handler, middleware }),
+        })),
     }
 
     toggleEventListeners(instance, 'add')
@@ -58,7 +62,7 @@ function update(el, { value }) {
 
     instance.eventHandlers = events.map((eventName) => ({
         event: eventName,
-        handler: (event) => onEvent({ event, el, handler, middleware })
+        handler: (event) => onEvent({ event, el, handler, middleware }),
     }))
 
     toggleEventListeners(instance, 'add')
@@ -75,7 +79,7 @@ const directive = {
     bind,
     update,
     unbind,
-    instances
+    instances,
 }
 
 export default directive

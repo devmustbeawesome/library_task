@@ -34,10 +34,19 @@ const bind = (el, { value = true }) => {
                 const firstFocusable = focusable[0]
                 const lastFocusable = focusable[focusable.length - 1]
 
-                if (event.target === firstFocusable && event.shiftKey && event.key === 'Tab') {
+                if (
+                    event.target === firstFocusable &&
+                    event.shiftKey &&
+                    event.key === 'Tab'
+                ) {
                     event.preventDefault()
                     lastFocusable.focus()
-                } else if ((event.target === lastFocusable || Array.from(focusableProg).indexOf(event.target) >= 0) && !event.shiftKey && event.key === 'Tab') {
+                } else if (
+                    (event.target === lastFocusable ||
+                        Array.from(focusableProg).indexOf(event.target) >= 0) &&
+                    !event.shiftKey &&
+                    event.key === 'Tab'
+                ) {
                     event.preventDefault()
                     firstFocusable.focus()
                 }
@@ -53,7 +62,7 @@ const unbind = (el) => {
 
 const directive = {
     bind,
-    unbind
+    unbind,
 }
 
 export default directive
