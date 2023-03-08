@@ -1,4 +1,9 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-
+    postcss: {
+        plugins: {
+            'postcss-nested': {},
+            'postcss-nested-ancestors': {},
+            'postcss-preset-env': {},
+        },
+    },
 })

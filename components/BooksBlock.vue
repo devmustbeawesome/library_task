@@ -1,50 +1,106 @@
 <template>
     <h2>список книг</h2>
-    <BookListByAuthor :books="filteredBooks"></BookListByAuthor>
+    <BookListByAuthor
+        :books="filteredBooks"
+        @reload="reloadBooks"
+    ></BookListByAuthor>
     <h2>выберите автора</h2>
-    <AuthorsSelect :list="authors" v-model="selected">
-        <template #default="{ value1 }">
+    <MySelect v-model="selected" :list="newAuthors" @reload="reloadAuthors">
+        <template #default="{ spanValue }">
             <span>
-                {{ value1.name }}
+                {{ spanValue }}
             </span>
         </template>
-    </AuthorsSelect>
-    <hr>
-    <div class="modal-open" @click="activeModal = true">
-        открыть окно
-    </div>
-    <MyModal v-model:active="activeModal" :ableClose="true">
-        <template v-slot:header>
-            Заголовок окна
-        </template>
-        <template v-slot:content>
-            контент окна
-        </template>
-        <template v-slot:footer>
-            футер окна
-        </template>
-    </MyModal>
+    </MySelect>
+    <hr />
+    <AddAuthorForm />
 </template>
 
+<script setup lang="ts">
+import type { FetchError } from 'ofetch'
+import { useStorage } from '@vueuse/core'
+import AddAuthorForm from './AddAuthorForm.vue'
+import type Book from '@/types/book'
+import type ResponseSimple from '@/types/responseSimple'
+import type Author from '@/types/author'
+const selected = ref(3)
+const booksData = useStorage('books-list', {
+    data: [] as Book[],
+    timestamp: 0,
+})
+const authorsData = useStorage('authors-list', {
+    data: [] as Author[],
+    timestamp: 0,
+})
 
-<script setup>
-const selected = ref(3);
-const activeModal = ref(false);
-const books = reactive([
-    { author_id: 1, name: 'Руководство Vue 1/том 1' },
-    { author_id: 2, name: 'Руководство Vue 2/том 1' },
-    { author_id: 2, name: 'Руководство Vue 2/том 2' },
-    { author_id: 2, name: 'Руководство Vue 2/том 3' },
-    { author_id: 3, name: 'Руководство Vue 3/том 1' },
-    { author_id: 3, name: 'Руководство Vue 3/том 2' },
-    { author_id: 3, name: 'Руководство Vue 3/том 3' },
-    { author_id: 3, name: 'Руководство Vue 3/том 4' },
-    { author_id: 3, name: 'Руководство Vue 3/том 5' }
-])
-const authors = reactive([
-    { id: 1, name: 'test 1' },
-    { id: 2, name: 'test 2' },
-    { id: 3, name: 'test 3' }
-])
-const filteredBooks = computed(() => books.filter((el) => el.author_id == selected.value))
+const {
+    data: books,
+    // pending: pendingGetBookList,
+    // error: errorGetBookList,
+    execute: getBookList,
+} = await useAsyncData<Book[], FetchError>(
+    'books',
+    async () => {
+        return (
+            await $fetch<ResponseSimple<Book[]>>(
+                'https://analog.armdl.tech/api/books',
+                { method: 'get' }
+            )
+        ).data
+    },
+    {
+        server: false,
+    }
+)
+const {
+    data: authors,
+    // pending: pendingGetAuthorList,
+    // error: errorGetAuthorList,
+    execute: GetAuthorList,
+} = await useAsyncData<Author[], FetchError>(
+    'authors',
+    async () => {
+        return await (
+            await $fetch<ResponseSimple<Author[]>>(
+                'https://analog.armdl.tech/api/authors',
+                { method: 'get' }
+            )
+        ).data
+    },
+    {
+        server: false,
+    }
+)
+onMounted(async () => {
+    if (booksData.value.timestamp + 3600 < Date.now() / 1000) {
+        await reloadBooks()
+    }
+    if (authorsData.value.timestamp + 3600 < Date.now() / 1000) {
+        await reloadAuthors()
+    }
+})
+
+async function reloadBooks() {
+    await getBookList()
+    booksData.value.data = books.value ?? []
+    booksData.value.timestamp = Date.now() / 1000
+}
+async function reloadAuthors() {
+    await GetAuthorList()
+    authorsData.value.data = authors.value ?? []
+    authorsData.value.timestamp = Date.now() / 1000
+}
+const newAuthors = authorsData.value.data?.reduce((newAuthors, el) => {
+    newAuthors.set(el.id, el.name)
+    return newAuthors
+}, new Map<number, string>())
+const filteredBooks = computed(() =>
+    booksData.value.data
+        ?.filter((el) => el.author_id === selected.value)
+        .reduce((newBooks, el) => {
+            newBooks.set(el.id, el.title)
+            return newBooks
+        }, new Map<number, string>())
+)
 </script>
+<style lang="post"></style>

@@ -11,13 +11,14 @@
             <div
                 v-for="[key, value] in list"
                 :key="key"
-                @click=";(selected = key) | (label = value)"
+                @click="
+                    ;(selected = key) | (label = value) | (showSelect = false)
+                "
             >
-                <slot :value1="value"></slot>
+                <slot :span-value="value"></slot>
             </div>
         </template>
     </MyTooltip>
-    <button @click="$emit('reload')">обновить</button>
 </template>
 
 <script setup>
@@ -46,7 +47,7 @@ const updateList = (list = new Map(), selected = undefined) => {
 }
 </script>
 <style>
-.slectList {
+.select-list {
     display: block;
     position: absolute;
     border: 1px solid black;
@@ -55,7 +56,7 @@ const updateList = (list = new Map(), selected = undefined) => {
     background: inherit;
 }
 
-.mySelect {
+.my-select {
     border: 1px solid black;
     border-radius: 3px;
     cursor: pointer;
@@ -65,7 +66,7 @@ const updateList = (list = new Map(), selected = undefined) => {
     background: #ffffff;
 }
 
-.selectValue {
+.select-value {
     padding: 3px;
 }
 </style>

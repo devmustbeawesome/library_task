@@ -4,7 +4,11 @@
         <div class="modal">
             <div class="modal-header">
                 <slot name="header" />
-                <div class="close-icon" v-if="ableClose" @click="active = false">
+                <div
+                    v-if="ableClose"
+                    class="close-icon"
+                    @click="active = false"
+                >
                     ╳
                 </div>
             </div>
@@ -19,16 +23,18 @@
 </template>
 
 <script setup>
-
 const props = defineProps({
     active: { type: Boolean, required: false, default: false },
-    ableClose: { type: Boolean, required: false, default: true }
+    ableClose: { type: Boolean, required: false, default: true },
 })
 const emit = defineEmits(['update:active'])
 
 const active = ref(props.active)
 watch(active, (value) => emit('update:active', value))
-watch(() => props.active, (value) => active.value = value)
+watch(
+    () => props.active,
+    (value) => (active.value = value)
+)
 
 onBeforeMount(() => {
     if (typeof window !== 'undefined') {
@@ -41,7 +47,8 @@ onBeforeUnmount(() => {
     }
 })
 function keyPress({ key }) {
-    if (active.value && (key === 'Escape' || key === 'Esc')) active.value = false
+    if (active.value && (key === 'Escape' || key === 'Esc'))
+        active.value = false
 }
 </script>
 
@@ -75,7 +82,7 @@ function keyPress({ key }) {
     display: flex;
 }
 
-.hideIcon {
+.hide-icon {
     position: absolute;
     right: 3px;
     top: 3px;

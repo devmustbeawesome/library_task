@@ -43,7 +43,7 @@ const bind = (el, { value = true }) => {
                     lastFocusable.focus()
                 } else if (
                     (event.target === lastFocusable ||
-                        Array.from(focusableProg).indexOf(event.target) >= 0) &&
+                        Array.from(focusableProg).includes(event.target)) &&
                     !event.shiftKey &&
                     event.key === 'Tab'
                 ) {

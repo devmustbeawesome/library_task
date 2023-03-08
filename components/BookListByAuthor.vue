@@ -1,13 +1,13 @@
 <template>
     <ul>
-        <li v-for="book in props.books">
-            {{ book.name }}
+        <li v-for="[key, book] in books" :key="key">
+            {{ book }}
         </li>
     </ul>
-    {{ countBooks }}
+    <button @click="$emit('reload')">обновить</button>
 </template>
 
 <script setup>
-    const props = defineProps(['books'])
-    const countBooks = computed(()=>props.books.length)
+defineProps(['books'])
+defineEmits(['reload'])
 </script>

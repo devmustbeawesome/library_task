@@ -1,8 +1,10 @@
 <template>
-  <h1>Index page</h1>
-  <BooksBlock/>
+    <div class="norin-task__main">
+        <h1>Index page</h1>
+        <BooksBlock> </BooksBlock>
+    </div>
 </template>
 
 <script setup>
-  import { BooksBlock } from '#components'
+import { BooksBlock } from '#components'
 </script>
