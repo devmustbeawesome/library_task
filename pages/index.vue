@@ -1,5 +1,5 @@
 <template>
-    <div class="norin-task__main">
+    <div class="library-task__main">
         <h1>Index page</h1>
         <BooksBlock> </BooksBlock>
     </div>
