@@ -1,6 +1,6 @@
 <template>
     <div class="library-task__main">
-        <h1>Index page</h1>
+        <h1>Index page test</h1>
         <BooksBlock> </BooksBlock>
     </div>
 </template>
